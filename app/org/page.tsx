@@ -9,6 +9,7 @@ import {
   Building2,
   Crown,
   Plus,
+  Settings,
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CreateOrgDialog } from "@/components/org/CreateOrgDialog";
+import { Avatar } from "@/components/ui/avatar";
 
 function OrgCard({
   name,
@@ -55,7 +57,9 @@ function OrgCard({
             </span>
           </div>
           <CardTitle className="mt-1 text-base">{name}</CardTitle>
-          <CardDescription className="font-mono text-xs">{slug}</CardDescription>
+          <CardDescription className="font-mono text-xs">
+            {slug}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-end text-muted-foreground transition-colors group-hover:text-primary">
@@ -89,6 +93,7 @@ function OrgCardSkeleton() {
 
 export default function OrgPage() {
   const orgs = useQuery(api.organizations.getUserOrganizations);
+  const user = useQuery(api.users.getCurrentUser);
 
   const isLoading = orgs === undefined;
   const isEmpty =
@@ -103,14 +108,21 @@ export default function OrgPage() {
             <Boxes className="h-5 w-5 text-primary" />
             <span className="font-bold tracking-tight">Stocky</span>
           </Link>
-          <CreateOrgDialog
-            trigger={
-              <Button size="sm" className="gap-1.5">
-                <Plus className="h-4 w-4" />
-                New Organization
-              </Button>
-            }
-          />
+          <div className="flex items-center gap-2">
+            <CreateOrgDialog
+              trigger={
+                <Button size="sm" className="gap-1.5">
+                  <Plus className="h-4 w-4" />
+                  New Organization
+                </Button>
+              }
+            />
+            <Button size="sm" className="gap-1.5" variant="outline" asChild>
+              <Link href={`/users/${user?._id}`}>
+                User Settings <Settings />
+              </Link>
+            </Button>
+          </div>
         </div>
       </header>
 
