@@ -247,6 +247,7 @@ export default function LocationsPage() {
                   isOwner={isOwner}
                   onToggleActive={handleToggleActive}
                   onSetDefault={handleSetDefault}
+                  onDelete={handleDelete}
                 />
               ))}
             </div>

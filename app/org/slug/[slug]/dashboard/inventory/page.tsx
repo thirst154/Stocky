@@ -2,10 +2,7 @@
 
 import { Columns } from "@/components/inventory/AbstractStockTable/Columns";
 import { DataTable } from "@/components/inventory/AbstractStockTable/dataTable";
-import {
-  CreateLocationDialog,
-  CreateStockDialog,
-} from "@/components/inventory/NewStockDialog";
+import { CreateStockDialog } from "@/components/inventory/NewStockDialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/convex/_generated/api";
