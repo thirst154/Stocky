@@ -49,6 +49,16 @@ export const getOrgBySlug = query({
   },
 });
 
+export const getOrgByID = query({
+  args: { id: v.id("organizations") },
+  handler: async (ctx, { id }) => {
+    return await ctx.db
+      .query("organizations")
+      .withIndex("by_id", (q) => q.eq("_id", id))
+      .first();
+  },
+});
+
 export const createOrganization = mutation({
   args: {
     name: v.string(),
@@ -101,7 +111,8 @@ export const updateOrganization = mutation({
 
     const org = await ctx.db.get(orgId);
     if (!org) throw new Error("Organization not found");
-    if (org.ownerID !== userId) throw new Error("Only the owner can update organization details");
+    if (org.ownerID !== userId)
+      throw new Error("Only the owner can update organization details");
 
     const patch = Object.fromEntries(
       Object.entries(fields).filter(([, v]) => v !== undefined),

@@ -16,7 +16,10 @@ export default function OrganizationLayout({
   const slug = params.slug as string;
   const pathname = usePathname();
 
-  const org = useQuery(api.organizations.getOrgBySlug, slug ? { slug } : "skip");
+  const org = useQuery(
+    api.organizations.getOrgBySlug,
+    slug ? { slug } : "skip",
+  );
   const user = useQuery(api.users.getCurrentUser);
 
   const isLoading = org === undefined || user === undefined;
@@ -30,7 +33,7 @@ export default function OrganizationLayout({
   ];
 
   return (
-    <div className="flex flex-1 flex-col gap-4">
+    <div className="flex flex-1 flex-col gap-4 p-6">
       {/* Header */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 font-mono text-sm text-muted-foreground capitalize">

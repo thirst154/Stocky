@@ -84,6 +84,8 @@ export default defineSchema({
     categories: v.array(v.string()),
 
     barcode: v.optional(v.string()),
+    // e.g. 50ml or 100g
+    quantity: v.number(),
     unit: v.string(),
 
     reorderPoint: v.number(),

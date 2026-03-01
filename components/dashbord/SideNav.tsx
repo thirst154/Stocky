@@ -14,6 +14,7 @@ import {
   Settings,
   ChevronsUpDown,
   Building2,
+  User,
 } from "lucide-react";
 import {
   Sidebar,
@@ -94,10 +95,7 @@ export default function SideNav({ slug }: { slug: string }) {
   }
 
   return (
-    <Sidebar
-      collapsible="icon"
-      className="[&_[data-slot='sidebar-inner']]:[background:linear-gradient(160deg,color-mix(in_oklch,var(--sidebar)_88%,var(--primary))_0%,var(--sidebar)_50%)]"
-    >
+    <Sidebar collapsible="icon" className="">
       {/* Header — org name */}
       <SidebarHeader className="pb-4 pt-5">
         <SidebarMenu>
@@ -193,6 +191,15 @@ export default function SideNav({ slug }: { slug: string }) {
                     </span>
                   </div>
                 </div>
+                <DropdownMenuItem>
+                  <Link
+                    href={`/users/${user?._id}`}
+                    className="flex items-center gap-2.5"
+                  >
+                    <User className="size-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
