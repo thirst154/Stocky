@@ -1,10 +1,9 @@
 "use client";
 
 import { DataTable } from "@/components/inventory/AbstractStockTable/dataTable";
-import {
-  buildLocationStockColumns,
-} from "@/components/locations/LocationStockColumns";
+import { buildLocationStockColumns, type LocationStockRow } from "@/components/locations/LocationStockColumns";
 import { NewLocationStockDialog } from "@/components/locations/NewLocationStockDialog";
+import { EditQuantityDialog } from "@/components/locations/EditQuantityDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -21,21 +20,15 @@ export default function LocationDetailPage() {
   const slug = params.slug as string;
   const locationId = params.location_id as Id<"locations">;
 
-  const org = useQuery(
-    api.organizations.getOrgBySlug,
-    slug ? { slug } : "skip",
-  );
-
+  const org = useQuery(api.organizations.getOrgBySlug, slug ? { slug } : "skip");
   const locations = useQuery(
     api.locations.getOrgLocations,
     org?._id ? { orgId: org._id } : "skip",
   );
-
   const location = useMemo(
     () => locations?.find((l) => l._id === locationId),
     [locations, locationId],
   );
-
   const locationStocks = useQuery(
     api.locationStocks.getLocationStocks,
     org?._id ? { locationId, orgId: org._id } : "skip",
@@ -43,13 +36,15 @@ export default function LocationDetailPage() {
 
   const removeLocationStock = useMutation(api.locationStocks.removeLocationStock);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editingRow, setEditingRow] = useState<LocationStockRow | null>(null);
 
   const columns = useMemo(
     () =>
-      buildLocationStockColumns((id) => {
-        removeLocationStock({ locationStockId: id });
-      }),
+      buildLocationStockColumns(
+        (row) => setEditingRow(row),
+        (id) => removeLocationStock({ locationStockId: id }),
+      ),
     [removeLocationStock],
   );
 
@@ -80,12 +75,8 @@ export default function LocationDetailPage() {
               <Badge variant="outline" className="font-mono text-xs">
                 {location.code}
               </Badge>
-              {location.isDefault && (
-                <Badge variant="secondary">Default</Badge>
-              )}
-              {!location.isActive && (
-                <Badge variant="destructive">Inactive</Badge>
-              )}
+              {location.isDefault && <Badge variant="secondary">Default</Badge>}
+              {!location.isActive && <Badge variant="destructive">Inactive</Badge>}
             </div>
             {location.description && (
               <p className="text-muted-foreground">{location.description}</p>
@@ -98,15 +89,12 @@ export default function LocationDetailPage() {
         )}
       </div>
 
-      {/* Stock table toolbar */}
+      {/* Toolbar */}
       <div className="flex justify-between items-end">
         <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
           Location Inventory
         </p>
-        <Button
-          onClick={() => setDialogOpen(true)}
-          disabled={!location?.isActive}
-        >
+        <Button onClick={() => setAddDialogOpen(true)} disabled={!location?.isActive}>
           Add Stock <Plus className="ml-1 h-4 w-4" />
         </Button>
       </div>
@@ -126,15 +114,21 @@ export default function LocationDetailPage() {
         )}
       </div>
 
-      {/* Dialog */}
+      {/* Add stock dialog */}
       {org && location?.isActive && (
         <NewLocationStockDialog
           orgId={org._id}
           locationId={locationId}
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
+          open={addDialogOpen}
+          onOpenChange={setAddDialogOpen}
         />
       )}
+
+      {/* Edit quantity dialog */}
+      <EditQuantityDialog
+        row={editingRow}
+        onOpenChange={(open) => { if (!open) setEditingRow(null); }}
+      />
     </div>
   );
 }
