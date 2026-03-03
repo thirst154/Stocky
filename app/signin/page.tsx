@@ -71,7 +71,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center gradient-grid-background p-4">
       <Link href="/" className="mb-8 flex items-center gap-2">
         <Boxes className="h-6 w-6 text-primary" />
         <span className="text-xl font-bold tracking-tight">Stocky</span>
