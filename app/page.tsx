@@ -61,7 +61,7 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen gradient-grid-background flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-10 border-b border-border/40 bg-background/80 backdrop-blur-sm">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
@@ -117,7 +117,7 @@ export default function Page() {
         <section className="mx-auto max-w-6xl px-4 pb-24">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature) => (
-              <Card key={feature.title} className="border-border/50 bg-card/50">
+              <Card key={feature.title} className="border-border/50 bg-card/70">
                 <CardHeader className="pb-3">
                   <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
                     <feature.icon className="h-5 w-5 text-primary" />

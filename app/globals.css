@@ -185,3 +185,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .gradient-grid-background {
+    background-color: var(--background);
+    background-image:
+      linear-gradient(to bottom, var(--background) 0%, transparent 60%),
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size:
+      100% 100%,
+      48px 48px,
+      48px 48px;
+  }
+}
