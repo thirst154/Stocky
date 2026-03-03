@@ -6,7 +6,7 @@ import { useQuery } from "convex/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Boxes,
+  ChevronRight,
   LayoutDashboard,
   LogOut,
   MapPin,
@@ -27,8 +27,16 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,11 +57,6 @@ const navItems = (slug: string) => [
     label: "Inventory",
     icon: Package,
     href: `/org/slug/${slug}/dashboard/inventory`,
-  },
-  {
-    label: "Locations",
-    icon: MapPin,
-    href: `/org/slug/${slug}/dashboard/locations`,
   },
   {
     label: "Organization",
@@ -82,8 +85,14 @@ export default function SideNav({ slug }: { slug: string }) {
     slug ? { slug } : "skip",
   );
   const user = useQuery(api.users.getCurrentUser);
+  const locations = useQuery(
+    api.locations.getOrgLocations,
+    org ? { orgId: org._id } : "skip",
+  );
 
   const items = navItems(slug);
+  const locationsHref = `/org/slug/${slug}/dashboard/locations`;
+  const locationsActive = pathname.startsWith(locationsHref);
 
   function isActive(item: (typeof items)[number]) {
     return item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -127,7 +136,68 @@ export default function SideNav({ slug }: { slug: string }) {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5">
-              {items.map((item) => (
+              {items.slice(0, 2).map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    size="lg"
+                    isActive={isActive(item)}
+                    tooltip={item.label}
+                    className="h-11 rounded-lg px-3 text-base font-medium [&>svg]:size-5"
+                  >
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+
+              {/* Locations collapsible */}
+              <Collapsible defaultOpen className="group/collapsible">
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      size="lg"
+                      isActive={locationsActive}
+                      tooltip="Locations"
+                      className="h-11 rounded-lg px-3 text-base font-medium [&>svg]:size-5"
+                    >
+                      <MapPin />
+                      <span>Locations</span>
+                      <ChevronRight className="ml-auto size-4 shrink-0 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          asChild
+                          isActive={pathname === locationsHref}
+                        >
+                          <Link href={locationsHref}>All Locations</Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      {locations?.filter((l) => l.isActive).map((loc) => (
+                        <SidebarMenuSubItem key={loc._id}>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={pathname.startsWith(
+                              `${locationsHref}/${loc._id}`,
+                            )}
+                          >
+                            <Link href={`${locationsHref}/${loc._id}`}>
+                              {loc.name}
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+
+              {items.slice(2).map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
