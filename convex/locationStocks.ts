@@ -3,6 +3,32 @@ import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { requireOrgMember } from "./utils";
 
+export const getItemLocationStocks = query({
+  args: { itemId: v.id("stockItems"), orgId: v.id("organizations") },
+  handler: async (ctx, { itemId, orgId }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+    await requireOrgMember(ctx, userId, orgId);
+
+    const stocks = await ctx.db
+      .query("locationStocks")
+      .withIndex("by_item", (q) =>
+        q.eq("organizationID", orgId).eq("itemID", itemId),
+      )
+      .filter((q) => q.eq(q.field("deletedAt"), undefined))
+      .collect();
+
+    const withLocations = await Promise.all(
+      stocks.map(async (stock) => {
+        const location = await ctx.db.get(stock.locationID);
+        return { ...stock, location };
+      }),
+    );
+
+    return withLocations;
+  },
+});
+
 export const getLocationStocks = query({
   args: {
     locationId: v.id("locations"),

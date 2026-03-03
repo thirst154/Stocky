@@ -1,6 +1,6 @@
 "use client";
 
-import { Columns } from "@/components/inventory/AbstractStockTable/Columns";
+import { buildInventoryColumns } from "@/components/inventory/AbstractStockTable/Columns";
 import { DataTable } from "@/components/inventory/AbstractStockTable/dataTable";
 import { CreateStockDialog } from "@/components/inventory/NewStockDialog";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Plus } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function Page() {
   const params = useParams();
@@ -20,6 +20,7 @@ export default function Page() {
   );
 
   const [newStockDialogOpen, setNewStockDialogOpen] = useState(false);
+  const columns = useMemo(() => buildInventoryColumns(slug ?? ""), [slug]);
 
   const StockItems = useQuery(
     api.stockItems.getStockItems,
@@ -52,7 +53,7 @@ export default function Page() {
       <Separator />
 
       <div>
-        {StockItems && <DataTable columns={Columns} data={StockItems} />}
+        {StockItems && <DataTable columns={columns} data={StockItems} />}
       </div>
       {org && (
         <CreateStockDialog
